@@ -31,11 +31,12 @@ log "================ STARTING HIFI ALIGNMENT ================"
 for FASTQ in $(ls ${RAW_DIR}/*.fastq.gz); do
     NAME=$(basename ${FASTQ%.fastq.gz})
     log "Aligning sample: ${NAME}"
-    
-    pbmm2 align ${REF} ${FASTQ} ${BAM_DIR}/${NAME}_sorted.bam \
-        --preset CCS \
-        --sort \
-        -j ${THREADS}
+    ngmlr -t ${THREADS} \
+          -r ${REF} \
+          -q ${FASTQ} \
+          --presets pacbio \
+          --bam-fix \
+          -o ${BAM_DIR}/${NAME}_sorted.bam
         
     samtools index -@ ${THREADS} ${BAM_DIR}/${NAME}_sorted.bam
 done
